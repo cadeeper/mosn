@@ -65,6 +65,15 @@ func GetMatcher(name types.ProtocolName) types.ProtocolMatch {
 	return matcherMap[name]
 }
 
+//GetMatchers return all matchers that was registered
+func GetMatchers() []types.ProtocolMatch {
+	var matchers = make([]types.ProtocolMatch, len(matcherMap))
+	for _, v := range matcherMap {
+		matchers = append(matchers, v)
+	}
+	return matchers
+}
+
 // RegisterMapping register the HTTP status code mapping function of the protocol into factory
 func RegisterMapping(name types.ProtocolName, mapping protocol.HTTPMapping) error {
 	// check name conflict

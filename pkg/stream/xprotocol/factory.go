@@ -22,6 +22,7 @@ import (
 
 	"mosn.io/api"
 	"mosn.io/mosn/pkg/protocol"
+	"mosn.io/mosn/pkg/protocol/xprotocol"
 	"mosn.io/mosn/pkg/stream"
 	"mosn.io/mosn/pkg/types"
 )
@@ -49,5 +50,15 @@ func (f *streamConnFactory) CreateBiDirectStream(context context.Context, connec
 }
 
 func (f *streamConnFactory) ProtocolMatch(context context.Context, prot string, magic []byte) error {
+	for _, matcher := range xprotocol.GetMatchers() {
+		result := matcher(magic)
+		if result == types.MatchSuccess {
+			return nil
+		}
+		if result == types.MatchAgain {
+			return stream.EAGAIN
+		}
+	}
 	return stream.FAILED
+
 }
